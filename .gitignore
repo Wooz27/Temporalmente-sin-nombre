@@ -1,0 +1,72 @@
+# ==============================
+# Python & Entornos Virtuales
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Entornos virtuales (venv, env, conda)
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Archivos de caché y compilación
+*.manifest
+*.spec
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==============================
+# Django (Bases de datos y medios)
+# ==============================
+# Base de datos local de pruebas
+*.sqlite3
+db.sqlite3
+
+# Archivos subidos por usuarios (fotos de mascotas)
+media/
+mediafiles/
+
+# Recopilación de estáticos en producción
+staticfiles/
+
+# Logs locales
+*.log
+
+# Variables de entorno y credenciales
+.env
+.env.local
+.env.*.local
+
+# ==============================
+# Frontend (Astro / React / Node.js)
+# ==============================
+node_modules/
+dist/
+.astro/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================
+# Editores y Sistema Operativo
+# ==============================
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains (PyCharm, WebStorm)
+.idea/
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+desktop.ini
