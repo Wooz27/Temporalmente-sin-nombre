@@ -2,6 +2,9 @@ from django.contrib import admin
 from .models import Owner, Animal
 from django.utils.html import format_html
 from django import forms
+from .utils import generate_qr_base64
+from django.db.models import Q
+
 
 admin.site.site_header = "Panel de Adopciones "
 admin.site.site_title = "Adopciones"
@@ -17,22 +20,24 @@ class AnimalInline (admin.TabularInline):
     
     def has_add_permission(self, request, obj=None):
         return False
-    
-    
+
+
+
+
 @admin.register(Animal)
 class AnimalAdmin (admin.ModelAdmin):
     list_display = ("foto_thumbnail","name", "race", "age", "state", "owner", "public_id", "created_at" )
     list_filter = ("state", "name")
     search_fields = ("name", "public_id", "owner__name", "owner__number")
     list_select_related = ("owner",)
-    readonly_fields = ("public_id", "created_at", "foto_preview")
-    
-    
+    readonly_fields = ("public_id", "created_at", "foto_preview","generate_qr","owner")
+
+
     # Distribucion visual del formulario
     fieldsets = (
         ("Identificador del Collar", {
-            "fields": ("public_id",),
-            "description": "Este identificador se genera solo y se usa para el QR."
+            "fields": ("public_id", "generate_qr"),
+            "description": "Este identificador se genera solo"
         }),
         ("Datos del Animal", {
             "fields": ("name", "age", "race", "state", "visual1", "foto_preview")
@@ -47,6 +52,22 @@ class AnimalAdmin (admin.ModelAdmin):
         }),
     )
 
+
+
+    @admin.display(description="Placa QR")
+    def generate_qr (self, obj):
+        if not obj.public_id:
+            return "Aun no existe un el animal, no se puede generar qr"
+        url = f"http://localhost:4321/collar/{obj.public_id}/"
+        img = generate_qr_base64(url)
+        
+        return format_html(
+                '<img src="data:image/png;base64,{}" style="width:300px; height: 300px; border-radius: 6px;" />',
+                img
+                )
+
+
+
     # Miniatura pequeña para la tabla general
     @admin.display(description="Foto")
     def foto_thumbnail(self, obj):
@@ -56,7 +77,8 @@ class AnimalAdmin (admin.ModelAdmin):
                 obj.visual1.url
             )
         return "Sin foto"
-    
+
+
     # Previsualizacion grande dentro del formulario
     @admin.display(description="Vista previa actual")
     def foto_preview(self, obj):
@@ -68,8 +90,7 @@ class AnimalAdmin (admin.ModelAdmin):
         return "No hay imagen subida aún"
     
     
-    
-    
+
 class OwnerAdminForm(forms.ModelForm):
     animals_assigned = forms.ModelMultipleChoiceField(
         queryset= Animal.objects.all(),
@@ -77,11 +98,28 @@ class OwnerAdminForm(forms.ModelForm):
         label = "Asignar mascotas"
         
     )
+    class Meta:
+        model = Owner
+        fields = "__all__"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if self.instance.pk:
+            self.fields ["animals_assigned"].initial = self.instance.animals.all()
+            self.fields ["animals_assigned"].queryset = Animal.objects.filter(Q(owner = self.instance) | Q (owner__isnull = True, state = "disponible"))
+        else:
+            self.fields["animals_assigned"].queryset = Animal.objects.filter(owner__isnull = True, state= "disponible")
+            
+        
+    
+    
+    
 
 
 @admin.register(Owner)
 class OwnerAdmin(admin.ModelAdmin):
-    list_display = ("name", "number", "total_pets")
+    list_display = ("name", "number", "total_pets", )
     search_fields = ("name", "number")
     
     inlines = [AnimalInline]
