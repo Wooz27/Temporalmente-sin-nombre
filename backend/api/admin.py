@@ -4,23 +4,12 @@ from django.utils.html import format_html
 from django import forms
 from .utils import generate_qr_base64
 from django.db.models import Q
-
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.urls import reverse_lazy
 
 admin.site.site_header = "Panel de Adopciones "
 admin.site.site_title = "Adopciones"
 admin.site.index_title = "Gestión del Refugio"
-
-
-class AnimalInline (admin.TabularInline):
-    model = Animal
-    extra = 0 
-    fields = ("name", "race", "state", "public_id", )
-    readonly_fields = ("name", "race", "state","public_id",)
-    can_delete = False
-    
-    def has_add_permission(self, request, obj=None):
-        return False
-
 
 
 
@@ -95,9 +84,19 @@ class OwnerAdminForm(forms.ModelForm):
     animals_assigned = forms.ModelMultipleChoiceField(
         queryset= Animal.objects.all(),
         required = False,
-        label = "Asignar mascotas"
-        
+        label = "Asignar mascotas",
+        widget = FilteredSelectMultiple (verbose_name = "Mascotas", is_stacked = False)
     )
+
+    class Media:
+        css = {"all": ("admin/css/widgets.css",)}
+        js = (
+            reverse_lazy("admin:jsi18n"),
+            "admin/js/core.js",
+            "admin/js/SelectBox.js",
+            "admin/js/SelectFilter2.js",
+        )
+
     class Meta:
         model = Owner
         fields = "__all__"
@@ -110,9 +109,7 @@ class OwnerAdminForm(forms.ModelForm):
             self.fields ["animals_assigned"].queryset = Animal.objects.filter(Q(owner = self.instance) | Q (owner__isnull = True, state = "disponible"))
         else:
             self.fields["animals_assigned"].queryset = Animal.objects.filter(owner__isnull = True, state= "disponible")
-            
-        
-    
+
     
     
 
@@ -121,8 +118,27 @@ class OwnerAdminForm(forms.ModelForm):
 class OwnerAdmin(admin.ModelAdmin):
     list_display = ("name", "number", "total_pets", )
     search_fields = ("name", "number")
-    
-    inlines = [AnimalInline]
+    form = OwnerAdminForm
+
+    def save_related(self, request, form, formsets, change):
+      super().save_related(request, form, formsets, change)
+
+      # sacar los datos del dueño 
+      owner = form.instance
+
+      # extraer la info limpia y los animales seleccionados
+      animals_select = form.cleaned_data.get("animals_assigned", [])
+      ids_select = [animal.id for animal in animals_select]
+
+      # Si se desmarca alguno liberar por sobre escritura
+      owner.animals.exclude(id__in=ids_select).update(
+          owner=None, state="disponible"
+      )
+
+      # Asignar esta real
+      Animal.objects.filter(id__in=ids_select).update(
+          owner=owner, state="adoptado"
+      )
     
     @admin.display(description="Mascotas Adoptadas")
     def total_pets(self, obj):
