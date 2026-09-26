@@ -71,6 +71,16 @@ DATABASES = {
 }
 
 
+REST_FRAMEWORk = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle"
+        ],
+        "DEFAULT_THROTTLE_RATES" : {
+            "anon": "10/minute"
+            } 
+        }
+
+
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
