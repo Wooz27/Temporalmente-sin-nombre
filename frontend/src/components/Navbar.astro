@@ -1,0 +1,36 @@
+---
+interface NavLink {
+    label:string;
+    href: string;
+}
+
+const navLinks: NavLink[] =[
+    {label: "Inicio", href: "/"},
+    {label: "Animales", href:"#animals"},
+    {label: "Nosotros", href: "#about"},
+    {label: "Historias", href: "#stories"}
+] 
+
+interface Props {
+    brandName?: string
+}
+
+const {brandName="Alice frey"} = Astro.props
+---
+
+<nav class="navbar">
+    <a href="/" class="brand">
+    <span class="accent">
+        {brandName}
+    </span>
+    </a>
+
+    <div class="menu"></div>    
+        {
+        navLinks.map((link) => (
+        <a href={link.href} class="navitem">
+            {link.label}
+        </a>
+        ))
+        }
+</nav>

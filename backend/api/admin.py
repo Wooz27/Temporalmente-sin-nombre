@@ -123,22 +123,22 @@ class OwnerAdmin(admin.ModelAdmin):
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
 
-    # sacar los datos del dueño 
-    owner = form.instance
+        # sacar los datos del dueño 
+        owner = form.instance
 
-    # extraer la info limpia y los animales seleccionados
-    animals_select = form.cleaned_data.get("animals_assigned", [])
-    ids_select = [animal.id for animal in animals_select]
+        # extraer la info limpia y los animales seleccionados
+        animals_select = form.cleaned_data.get("animals_assigned", [])
+        ids_select = [animal.id for animal in animals_select]
 
-    # Si se desmarca alguno liberar por sobre escritura
-    owner.animals.exclude(id__in=ids_select).update(
-        owner=None, state="disponible"
-    )
+        # Si se desmarca alguno liberar por sobre escritura
+        owner.animals.exclude(id__in=ids_select).update(
+            owner=None, state="disponible"
+        )
 
-    # Asignar esta real
-    Animal.objects.filter(id__in=ids_select).update(
-        owner=owner, state="adoptado"
-    )
+        # Asignar esta real
+        Animal.objects.filter(id__in=ids_select).update(
+            owner=owner, state="adoptado"
+        )
     
     @admin.display(description="Mascotas Adoptadas")
     def total_pets(self, obj):

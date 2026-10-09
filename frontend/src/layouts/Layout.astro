@@ -1,0 +1,28 @@
+---
+import Navbar from "../components/Navbar.astro";
+import "../styles/global.css";
+
+interface Props{
+	title: string
+	descrip?: string
+}
+
+const {title, descrip ="Un web diseñada para adoptar y rencontrar mascotas"} = Astro.props;
+
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<script defer src="https://umami.casatos.online/script.js" data-website-id="85163c8b-e09f-4810-bc7e-ef92d1906b1d"></script>
+	</head>
+	<body>
+		<slot />
+		<h1>Astro</h1>
+	</body>
+</html>
