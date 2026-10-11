@@ -132,7 +132,7 @@ class OwnerAdmin(admin.ModelAdmin):
 
         # Si se desmarca alguno liberar por sobre escritura
         owner.animals.exclude(id__in=ids_select).update(
-            owner=None, state="disponible"
+            owner=None, state="disclponible"
         )
 
         # Asignar esta real
