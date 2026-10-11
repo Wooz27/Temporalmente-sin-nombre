@@ -71,6 +71,7 @@ DATABASES = {
 }
 
 
+#rite limit para proteger de scraping
 REST_FRAMEWORk = {
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle"
@@ -79,6 +80,11 @@ REST_FRAMEWORk = {
             "anon": "10/minute"
             } 
         }
+
+#Para evitar guardar archivos png o jpg guardamos las webp (esto es un lib)
+DJANGORESIZED_DEFAULT_FORMAT = "WEBP"
+DJANGORESIZED_DEFAULT_QUALITY = 80
+DJANGORESIZED_DEFAULT_KEEP_META = False
 
 
 # Password validation

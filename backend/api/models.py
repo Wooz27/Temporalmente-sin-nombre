@@ -1,5 +1,7 @@
 import uuid
 from django.db import models
+from django_resized import ResizedImageField
+
 
 class Owner (models.Model):
     #Este campo es para los propietarios, pueden agregar los que gusten
@@ -39,7 +41,7 @@ class Animal (models.Model):
         verbose_name="Estado de adopción",
         
         )
-    visual1 = models.ImageField(
+    visual1 = ResizedImageField(
         upload_to="animals/",
         null=True,
         blank=True,
