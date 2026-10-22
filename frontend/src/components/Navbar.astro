@@ -18,6 +18,7 @@ interface Props {
 const {brandName="Alice frey"} = Astro.props
 ---
 
+
 <nav class="navbar">
     <a href="/" class="brand">
     <span class="accent">
@@ -25,7 +26,20 @@ const {brandName="Alice frey"} = Astro.props
     </span>
     </a>
 
-    <div class="menu"></div>    
+    <!-- Seccion del boton movil (tipo hamburguesa) -->
+     <input type="checkbox" id="menu-toggle" class="menu-toggle"/>
+    <nav class="nav-toggle">
+         <label for="menu-toggle" class="btn-open">
+            <i class="fas fa-bars menu-btn"></i>
+        </label >
+        <label for="menu-toggle" class="btn-close">
+            <i class="fas fa-times close-btn"></i>
+        </label>
+    </nav>
+
+    <!-- Links del navbar-->
+    <div class="menu">
+
         {
         navLinks.map((link) => (
         <a href={link.href} class="navitem">
@@ -33,4 +47,101 @@ const {brandName="Alice frey"} = Astro.props
         </a>
         ))
         }
+    </div>
+    
 </nav>
+
+
+<style>
+    .brand{
+        text-decoration: none;
+        color: white
+    }
+
+    .navbar {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        margin: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .menu-toggle{
+        display: none;
+    }
+    .menu {
+        display: flex;
+        gap: 2rem;   
+    }
+    .navitem{        
+        text-decoration: none;
+        color: white;
+    }
+
+    .nav-toggle{
+        display: none;
+    }
+
+    @media (max-width: 768px){
+
+        .nav-toggle{
+            display: block;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .nav-toggle .btn-open {
+            display: block;
+        }
+
+        .nav-toggle .btn-close {
+            display: none;
+        }
+
+        .menu{
+            display: none;
+            gap: 1rem;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0px;
+            text-align: center;
+            
+            min-width: 180px;
+            padding: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-radius: 20px;
+
+
+            /* Estilo glass del nav*/
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .menu-toggle:checked ~ .nav-toggle .btn-open {
+            display: none;
+        }
+
+        .menu-toggle:checked ~ .nav-toggle .btn-close {
+            display: block;
+        }
+
+        .menu-toggle:checked ~ .menu {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        }
+
+
+</style>
