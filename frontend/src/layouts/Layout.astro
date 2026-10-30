@@ -27,13 +27,28 @@ const {title, descrip ="Un web diseñada para adoptar y rencontrar mascotas"} = 
 	</head>
 	<body>
 		<slot />
-		<h1>Astro</h1>
+		<h1 class="demo_h1">Astro</h1>
 	</body>
 </html>
 
 
 <style>
-	body{
-		background-color: #B2C6F7;
+	body {
+		margin: 0;
+		min-height: 100vh;
+		/* Color de fondo base  */
+		background-color: #004B53;
+
+		/* SVG ligero */
+		background-image: url('');
+
+		/* Se repite en mosaico continuo */
+		background-repeat: repeat;
+		background-size: 70px 70px; /* Tamaño y separación de cada huella */
 	}
+
+	.demo_h1{
+		color: #F7E481;
+	}
+
 </style>
